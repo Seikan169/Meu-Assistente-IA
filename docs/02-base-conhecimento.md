@@ -11,8 +11,7 @@ Descreva se usou os arquivos da pasta `data`, por exemplo:
 | `projetos_confiaveis.json` | JSON | Curadoria de ativos com Market Cap relevante (Ex: BTC, ETH) para evitar análise de moedas suspeitas. |
 | `guia_seguranca.pdf` | CSV | Manual de boas práticas sobre custódia (Wallets) e checklist de identificação de golpes.|
 
-> [!TIP]
-> **Quer um dataset mais robusto?** Você pode utilizar datasets públicos do [Hugging Face](https://huggingface.co/datasets) relacionados a finanças, desde que sejam adequados ao contexto do desafio.
+
 
 ---
 
@@ -34,7 +33,13 @@ O SeikanCript utiliza uma arquitetura RAG (Retrieval-Augmented Generation) para 
 ### Como os dados são usados no prompt?
 > Os dados vão no system prompt? São consultados dinamicamente?
 
-[Sua descrição aqui]
+Os dados são integrados de forma híbrida:
+
+1• As regras de comportamento e o glossário básico de termos são fixados no System Prompt para garantir a personalidade educativa.
+
+2• O perfil do investidor e o histórico de transações são injetados dinamicamente no Contexto da Janela de Chat a cada nova interação.
+
+3• Caso o usuário pergunte sobre um ativo específico, o agente dispara uma Function Call para buscar os dados em tempo real (API), que retornam e são anexados temporariamente ao prompt para a geração da resposta final.
 
 ---
 
@@ -43,13 +48,22 @@ O SeikanCript utiliza uma arquitetura RAG (Retrieval-Augmented Generation) para 
 > Mostre um exemplo de como os dados são formatados para o agente.
 
 ```
-Dados do Cliente:
-- Nome: João Silva
-- Perfil: Moderado
-- Saldo disponível: R$ 5.000
+[CONTEXTO DO SISTEMA]
+Nome do Agente: SeikanCript
+Perfil do Usuário: João Silva (Investidor Iniciante)
+Objetivo: Acumular 0.1 BTC até Dez/2026
+Saldo em Cripto: US$ 500.00 (em BTC)
 
-Últimas transações:
-- 01/11: Supermercado - R$ 450
-- 03/11: Streaming - R$ 55
-...
+[ÚLTIMAS ATIVIDADES REGISTRADAS]
+- 01/03: Compra de US$ 100.00 em BTC.
+- 10/03: Dúvida tirada sobre "O que é RSI".
+- 15/03: Alerta de volatilidade enviado (queda de 5% no BTC).
+
+[DADOS DA API EM TEMPO REAL]
+- Preço Atual BTC: US$ 68.450,00
+- Variação 24h: +1.2%
+- Índice Fear & Greed: 65 (Ganância)
+
+[PERGUNTA DO USUÁRIO]
+"Seikan, o BTC subiu um pouco, vale a pena comprar mais os meus US$ 50 mensais hoje?"
 ```
